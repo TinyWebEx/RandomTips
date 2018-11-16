@@ -1,11 +1,11 @@
 import "https://unpkg.com/mocha@5.2.0/mocha.js"; /* globals mocha */
 import "https://unpkg.com/chai@4.1.2/chai.js"; /* globals chai */
 
-import { tips } from "/common/modules/data/Tips.js";
+import { tips } from "../../../data/Tips.js";
 
 // TODO: only checks two levels deep. Currently, we do not require/test the third-level 8to be frozen)
 
-describe("common data: tips", function () {
+describe("data: tips", function () {
     describe("tips", function () {
         it("is there", function () {
             chai.assert.exists(tips);

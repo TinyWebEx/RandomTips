@@ -2,15 +2,15 @@ import "https://unpkg.com/mocha@5.2.0/mocha.js"; /* globals mocha */
 import "https://unpkg.com/chai@4.1.2/chai.js"; /* globals chai */
 import "https://unpkg.com/sinon@6.1.5/pkg/sinon.js"; /* globals sinon */
 
-import * as RandomTips from "/common/modules/RandomTips.js";
-import * as CustomMessages from "/common/modules/MessageHandler/CustomMessages.js";
+import * as RandomTips from "../RandomTips.js";
+import * as CustomMessages from "../../MessageHandler/CustomMessages.js";
 
 import * as AddonSettingsStub from "./helper/AddonSettingsStub.js";
 import * as HtmlMock from "./helper/HtmlMock.js";
 
 const HTML_BASE_FILE = "./randomTips/baseCode.html";
 
-describe("common module: RandomTips", function () {
+describe("RandomTips", function () {
     before(function () {
         AddonSettingsStub.before();
     });

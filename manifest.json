@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+  "name": "TinyWebEx RandomTips library dev example",
+  "short_name": "TinyWebEx RandomTips",
+  "version": "1.0",
+  "author": "rugk",
+
+  "description": "Shows a random non obstrusive tip to the user under some constraints.",
+  "homepage_url": "https://github.com/TinyWebEx/RandomTips",
+
+  // only for the unit test, we need to load libraries from CDNs
+  "content_security_policy": "default-src 'none'; style-src 'self' https://unpkg.com; script-src 'self' https://unpkg.com",
+
+  "permissions": [
+    // because it requires AddonSettings through Logger, MessageHandler etc.
+    "storage"
+  ],
+  "applications": {
+    "gecko": {
+      //ID required, because of storage permission
+      "id": "exampleId@rugk.github.io",
+      // minimum version, because of module system
+      "strict_min_version": "60.0a1"
+    }
+  }
+}
