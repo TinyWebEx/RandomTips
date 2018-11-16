@@ -1,3 +1,3 @@
-# TinyWebEx Logger
+# TinyWebEx RandomTips
 
-Console logging module that makes logging easier and adjustable.
+Shows a random non obstrusive tip to the user under some constraints.
