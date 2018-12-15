@@ -11,7 +11,7 @@
 // lodash
 import debounce from "../lodash/debounce.js";
 
-import * as Logger from "../Logger/Logger.js";
+
 import * as AddonSettings from "../AddonSettings/AddonSettings.js";
 import * as CustomMessages from "../MessageHandler/CustomMessages.js";
 
@@ -65,7 +65,7 @@ function messageDismissed(param) {
     tipShown = null;
     delete elMessage.dataset.tipId;
 
-    Logger.logInfo(`Tip ${id} has been dismissed.`);
+    console.info(`Tip ${id} has been dismissed.`);
 }
 
 /**
@@ -208,7 +208,7 @@ export function setContext(newContext) {
 export function showRandomTip() {
     // only try to select tip, if one is even available
     if (tips.length === 0) {
-        Logger.logInfo("no tips to show available anymore");
+        console.info("no tips to show available anymore");
         return;
     }
 
@@ -225,7 +225,7 @@ export function showRandomTip() {
         return;
     }
 
-    Logger.logInfo("selected tip to be shown:", randomNumber, tipSpec);
+    console.info("selected tip to be shown:", randomNumber, tipSpec);
 
     showTip(tipSpec);
 }
@@ -242,7 +242,7 @@ export function showRandomTipIfWanted() {
 
     // randomize tip showing in general
     if (!randomizePassed(GLOBAL_RANDOMIZE)) {
-        Logger.logInfo("show no random tip, because randomize did not pass");
+        console.info("show no random tip, because randomize did not pass");
         return;
     }
 
