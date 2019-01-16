@@ -3,10 +3,10 @@ import "https://unpkg.com/chai@4.1.2/chai.js"; /* globals chai */
 
 import { tips } from "../../../data/Tips.js";
 
-// TODO: only checks two levels deep. Currently, we do not require/test the third-level 8to be frozen)
+// TODO: only checks two levels deep. Currently, we do not require/test the third-level to be frozen)
 
 describe("data: tips", function () {
-    describe("tips", function () {
+    describe("tip list", function () {
         it("is there", function () {
             chai.assert.exists(tips);
             chai.assert.isNotEmpty(tips);
@@ -21,7 +21,7 @@ describe("data: tips", function () {
         });
     });
 
-    describe("tips – inner objects", function () {
+    describe("tips – inner objects, i.e. actual tips", function () {
         it("are there", function () {
             for (const tipObject of tips) {
                 chai.assert.exists(tipObject);
