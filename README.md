@@ -66,7 +66,7 @@ For getting and saving the data, it uses the [AddonSettings module](https://gith
 It does use the setting name `randomTips` and includes all data in potentially multiple nested objects there.
 Note that it itself does add another level of caching, i.e. it saves that object in it's module when it's `init` method is called.
 
-In order to properly use this module, it is recommend to thus set the following [default options](https://github.com/TinyWebEx/AddonSettings#user-content-setup-default-value-store), i.e. add this to your `DEFAULT_SETTINGS`: (TODO: does it work without?)
+In order to properly use this module, you have to set the following [default options](https://github.com/TinyWebEx/AddonSettings#user-content-setup-default-value-store), i.e. add this to your `DEFAULT_SETTINGS`:
 ```js
 randomTips: {
     tips: {}
