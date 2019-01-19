@@ -1,16 +1,14 @@
 /**
  * Shows random tips to the user, if wanted.
  *
- * @module /common/modules/RandomTips
- * @requires /common/modules/lib/lodash/debounce
- * @requires /common/modules/Logger
- * @requires /common/modules/AddonSettings
- * @requires /common/modules/MessageHandler/CustomMessages
+ * @module RandomTips
+ * @requires ../lib/lodash/debounce
+ * @requires ../AddonSettings
+ * @requires ../MessageHandler/CustomMessages
  */
 
 // lodash
 import debounce from "../lodash/debounce.js";
-
 
 import * as AddonSettings from "../AddonSettings/AddonSettings.js";
 import * as CustomMessages from "../MessageHandler/CustomMessages.js";
