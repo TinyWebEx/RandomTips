@@ -49,18 +49,18 @@ Instead of the last step, you can also use `showRandomTip` to force it to evalua
 
 ## Specifying tips
 
-Tips are specified as a list (array) of objects. Each object represents on tip and lists the contraints under which the tip may be shown or may not be shown. These are evaluated of this module, but only _after_ the global constraint(s), i.e. `showRandomTipIfWanted` (see [above](#using)), passed.
+Tips are specified as a list (array) of objects. Each object represents on tip and lists the constraints under which the tip may be shown or may not be shown. These are evaluated of this module, but only _after_ the global constraint(s), i.e. `showRandomTipIfWanted` (see [above](#using)), passed.
 
-There are many constraints you can configure/set, so it would not be useful to list them here, but [you can look them up in the JSDOC](). Also, you can see the same [in the example source code]() of a tips object. You can copy this to your `../data` dir (relative to this repo), but as the object is loaded via the `init` method, is it not required to be at any specififc place.
+There are many constraints you can configure/set, so it would not be useful to list them here, but [you can look them up in the JSDOC](). Also, you can see the same [in the example source code](examples/Tips.js) of a tips specification. You can copy this to your `../data` dir (relative to this repo), but as the object is loaded via the `init` method, is it not required to be at any specific place.
 
 ### Context
 
-The `.setContext` method is somewhat special, as it is optional, but recommend to call before you actually (try to) show a tip. It basically just sets a string value to let you specify the context you have when you are calling `RandomTips`, so you can differenciate whether you are e.g. calling it from your add-on's popup, options page or some other place.
+The `.setContext` method is somewhat special, as it is optional, but recommend to call before you actually (try to) show a tip. It basically just sets a string value to let you specify the context you have when you are calling `RandomTips`, so you can differentiate whether you are e.g. calling it from your add-on's popup, options page or some other place.
 You can thus easily limit where (i.e. in which "contexts") your tip may be shown or hidden.
 
 ## Addon settings
 
-This module needs to save some data in order to count the times the addon has been "opened" (i.e. the function has been triggered) or it needs to be saved how often a specififc tip has been shown (in some context etc.).
+This module needs to save some data in order to count the times the addon has been "opened" (i.e. the function has been triggered) or it needs to be saved how often a specific tip has been shown (in some context etc.).
 
 For getting and saving the data, it uses the [AddonSettings module](https://github.com/TinyWebEx/AddonSettings).
 It does use the setting name `randomTips` and includes all data in potentially multiple nested objects there.
