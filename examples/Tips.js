@@ -1,7 +1,5 @@
 /**
  * Data of the random tips.
- *
- * @module RandomTips
  */
 
 /**
@@ -10,7 +8,7 @@
  * @typedef {Object} TipObject
  * @property {string} id just some ID
  * @property {integer|null} requiredShowCount shows the message x times; set
- * to "null" to show infinitively
+ * to `null` to show infinitively
  * @property {bool} [allowDismiss=true] set to false to disallow dismissing
  * the message. This likely makes no sense for any tip, so the default is true.
  * @property {bool|integer} [requireDismiss=false] show the message, if it is
@@ -29,7 +27,7 @@
  * context -> num to only show the tip in a specific context at most for the
  * given number of times. See {@link RandomTips.setContext}.
  * @property {bool|integer} [randomizeDisplay=false] Randomizes the display with a
- * chance of 50% by default (when set to "true"). You can override that percentage
+ * chance of 50% by default (when set to `true`). You can override that percentage
  * (as an integer, e.g. 0.2 instead of 20%).
  * Note that the tip message display in general is already randomized
  * with a chance of 20%, see {@link RandomTips.GLOBAL_RANDOMIZE}.
@@ -68,7 +66,7 @@ const tipArray = [
     }
 ];
 
-// freeze the inner tib objects, this is strongly recommend
+// freeze the inner tip objects, this is strongly recommend
 tipArray.forEach((object) => Object.freeze(object));
 
 /**

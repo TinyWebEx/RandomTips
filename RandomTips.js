@@ -13,6 +13,17 @@ import debounce from "../lodash/debounce.js";
 import * as AddonSettings from "../AddonSettings/AddonSettings.js";
 import * as CustomMessages from "../MessageHandler/CustomMessages.js";
 
+/**
+ * The saved settings of a specific tip.
+ *
+ * @typedef {Object} TipConfigObject
+ * @property {integer} shownCount how often the tip has already been shown
+ * @property {integer} dismissedCount how often the tip has already been dismissed
+ * @property {Object.<string, integer>} [shownContext] how often the tip has
+ * already been shown in a specific context. The aquivalent to {@link module:app~TipObject.showInContext}
+ * See {@link setContext}.
+ */
+
 const TIP_MESSAGE_BOX_ID = "messageTips";
 const TIP_SETTING_STORAGE_ID = "randomTips";
 const GLOBAL_RANDOMIZE = 0.2; // (%)
@@ -20,11 +31,14 @@ const DEBOUNCE_SAVING = 1000; // ms
 const MESSAGE_TIP_ID = "messageTip";
 
 // default values/settings for tip/tipconfig
+/** @type {TipObject} */
 const DEFAULT_TIP_SPEC = Object.freeze({
     requiredTriggers: 10,
     randomizeDisplay: false,
     allowDismiss: true
 });
+
+/** @type {TipConfigObject} */
 const DEFAULT_TIP_CONFIG = Object.freeze({
     shownCount: 0,
     dismissedCount: 0,
@@ -38,7 +52,7 @@ let tipConfig = {
     tips: {}
 };
 
-let tipShown = null;
+let tipShowing = null;
 let context = null;
 
 /**
@@ -63,7 +77,7 @@ function messageDismissed(param) {
     const elMessage = param.elMessage;
 
     const id = elMessage.dataset.tipId;
-    if (tipShown.id !== id) {
+    if (tipShowing.id !== id) {
         throw new Error("cached tip and dismissed tip differ");
     }
 
@@ -72,7 +86,7 @@ function messageDismissed(param) {
     saveConfig();
 
     // cleanup values
-    tipShown = null;
+    tipShowing = null;
     delete elMessage.dataset.tipId;
 
     console.info(`Tip ${id} has been dismissed.`);
@@ -97,19 +111,20 @@ function randomizePassed(percentage) {
  * @function
  * @private
  * @param  {TipObject} tipSpec
+ * @param  {TipConfigObject} thisTipConfig the settings of the tip
  * @returns {void}
  */
-function showTip(tipSpec) {
+function showTip(tipSpec, thisTipConfig) {
     const elMessage = CustomMessages.getHtmlElement(MESSAGE_TIP_ID);
     elMessage.dataset.tipId = tipSpec.id;
     CustomMessages.showMessage(MESSAGE_TIP_ID, tipSpec.text, tipSpec.allowDismiss, tipSpec.actionButton);
 
     // update config
-    tipConfig.tips[tipSpec.id].shownCount = (tipConfig.tips[tipSpec.id].shownCount || 0) + 1;
-    tipConfig.tips[tipSpec.id].shownContext[context] = (tipConfig.tips[tipSpec.id].shownContext[context] || 0) + 1;
+    thisTipConfig.shownCount = thisTipConfig.shownCount + 1;
+    thisTipConfig.shownContext[context] = (thisTipConfig.shownContext[context] || 0) + 1;
     saveConfig();
 
-    tipShown = tipSpec;
+    tipShowing = tipSpec;
 }
 
 /**
@@ -119,7 +134,7 @@ function showTip(tipSpec) {
  * @function
  * @private
  * @param  {TipObject} tipSpecOrig
- * @returns {[TipObject, Object]}
+ * @returns {Array.<TipObject, Object>}
  */
 function applyTipSpecAndConfigDefaults(tipSpecOrig) {
     // shallow-clone object (no deep object are being modified)
@@ -152,7 +167,7 @@ function applyTipSpecAndConfigDefaults(tipSpecOrig) {
  * @function
  * @private
  * @param  {TipObject} tipSpec
- * @param  {Object} thisTipConfig
+ * @param  {TipConfigObject} thisTipConfig
  * @param  {Object} tipSpecOrig
  * @returns {bool}
  */
@@ -253,7 +268,7 @@ export function showRandomTip() {
 
     console.info("selected tip to be shown:", randomNumber, tipSpec);
 
-    showTip(tipSpec);
+    showTip(tipSpec, thisTipConfig);
 }
 
 /**
