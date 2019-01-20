@@ -26,7 +26,9 @@
 
 <nav >
     
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-RandomTips.html">RandomTips</a><ul class='methods'><li data-type='method'><a href="module-RandomTips.html#.init">init</a></li><li data-type='method'><a href="module-RandomTips.html#.setContext">setContext</a></li><li data-type='method'><a href="module-RandomTips.html#.showRandomTip">showRandomTip</a></li><li data-type='method'><a href="module-RandomTips.html#.showRandomTipIfWanted">showRandomTipIfWanted</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#tips">tips</a></li></ul>
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/TinyWebEx/" >All TinyWebExt modules</a></h2><h3>Modules</h3><ul><li><a href="module-RandomTips.html">RandomTips</a><ul class='methods'><li data-type='method'><a href="module-RandomTips.html#.init">init</a></li><li data-type='method'><a href="module-RandomTips.html#.setContext">setContext</a></li><li data-type='method'><a href="module-RandomTips.html#.showRandomTip">showRandomTip</a></li><li data-type='method'><a href="module-RandomTips.html#.showRandomTipIfWanted">showRandomTipIfWanted</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#tips">tips</a></li></ul>
 </nav>
 
 <div id="main">
@@ -127,7 +129,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="examples_Tips.js.html">examples/Tips.js</a>, <a href="examples_Tips.js.html#line75">line 75</a>
+        <a href="examples_Tips.js.html">examples/Tips.js</a>, <a href="examples_Tips.js.html#line113">line 113</a>
     </li></ul></dd>
     
 
@@ -167,7 +169,7 @@
 
 
 <div class="description">
-    The list of all tips. (now exported)
+    <p>The list of all tips. (now exported)</p>
 </div>
 
 
@@ -197,6 +199,248 @@
 
         
                 
+
+    
+
+    <h4 class="name" id="callbackShowTip"><span class="type-signature"></span>callbackShowTip<span class="signature">(tipSpec, thisTipConfig, tipSpecOrig, moduleConfig)</span><span class="type-signature"> &rarr; {boolean|null}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="examples_Tips.js.html">examples/Tips.js</a>, <a href="examples_Tips.js.html#line45">line 45</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Custom function to check whether a tip shall be shown or not.</p>
+<p><strong>Attention:</strong> This is evaluated before all other constraints were evaluated.
+Be careful before returning <code>true</code>, you may actually want to return <code>null</code>.</p>
+<ul>
+<li>If you return <code>true</code>, it means you <strong>force</strong>(!) the tip to be shown. This
+overrides the usual conditions and shows the tip immediately.</li>
+<li>If you return <code>false</code>, it means you disallow the tip to be shown.</li>
+<li>If <code>null</code> is returned, the usual (other) conditions that determinate whether
+to show the tip are evaluated.
+If you throw something, this cancels the whole tip selection process.</li>
+</ul>
+<p>Note that you can actually <em>modify</em> the values of the first two parameters, i.e.
+<code>tipSpec</code> and <code>thisTipConfig</code>. If you modify the config, it will be saved
+automatically.
+The difference between <code>tipSpec</code> and <code>tipSpecOrig</code> is, that in <code>tipSpec</code> the
+default values of the tips have been added/modified, if needed and that
+<code>tipSpecOrig</code> is the original as you have specified it in <a href="global.html#TipObject"><code>TipObject</code></a>.</p>
+<p>For stylistic reasons, it is recommend to not hardcode the function into the
+this file, but use a separate file/module.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>tipSpec</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#TipObject">TipObject</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the TipObject, merged with default values</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thisTipConfig</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-RandomTips.html#~TipConfigObject">module:RandomTips~TipConfigObject</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the settings of the tip</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>tipSpecOrig</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#TipObject">TipObject</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the original, unmodified (frozen) TipObject
+                                 of the tip</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>moduleConfig</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-RandomTips.html#~ModuleConfig">module:RandomTips~ModuleConfig</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the whole config of this module</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+|
+
+<span class="param-type">null</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+            
+                
 <h4 class="name" id="TipObject">TipObject</h4>
 
 
@@ -208,7 +452,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="examples_Tips.js.html">examples/Tips.js</a>, <a href="examples_Tips.js.html#line1">line 1</a>
+        <a href="examples_Tips.js.html">examples/Tips.js</a>, <a href="examples_Tips.js.html#line5">line 5</a>
     </li></ul></dd>
     
 
@@ -301,7 +545,7 @@
                 </td>
             
 
-            <td class="description last">just some ID</td>
+            <td class="description last"><p>just some ID</p></td>
         </tr>
 
     
@@ -337,8 +581,8 @@
                 </td>
             
 
-            <td class="description last">shows the message x times; set
-to "null" to show infinitively</td>
+            <td class="description last"><p>Shows the message x times; set
+to <code>null</code> to show infinitively. This is the maximum value.</p></td>
         </tr>
 
     
@@ -375,8 +619,8 @@ to "null" to show infinitively</td>
                 </td>
             
 
-            <td class="description last">set to false to disallow dismissing
-the message. This likely makes no sense for any tip, so the default is true.</td>
+            <td class="description last"><p>set to false to disallow dismissing
+the message. This likely makes no sense for any tip, so the default is true.</p></td>
         </tr>
 
     
@@ -416,10 +660,10 @@ the message. This likely makes no sense for any tip, so the default is true.</td
                 </td>
             
 
-            <td class="description last">show the message, if it is
+            <td class="description last"><p>show the message, if it is
 not, at least, dismissed for x times. Alternatively set to true to require
 that message is dismissed the exact same number as requiredShowCount states,
-i.e. only dismissed count as "tip shown".</td>
+i.e. only dismissed count as &quot;tip shown&quot;.</p></td>
         </tr>
 
     
@@ -459,8 +703,8 @@ i.e. only dismissed count as "tip shown".</td>
                 </td>
             
 
-            <td class="description last">hides the message, if it
-has been dismissed x times.</td>
+            <td class="description last"><p>hides the message, if it
+has been dismissed x times.</p></td>
         </tr>
 
     
@@ -497,9 +741,9 @@ has been dismissed x times.</td>
                 </td>
             
 
-            <td class="description last">require some displays ("triggers")
+            <td class="description last"><p>require some displays (&quot;triggers&quot;)
 of (any) add-on page before showing tip. This is effectively just a minimum
-limit, so it is not shown too "early".</td>
+limit, so it is not shown too &quot;early&quot;.</p></td>
         </tr>
 
     
@@ -534,9 +778,9 @@ limit, so it is not shown too "early".</td>
                 </td>
             
 
-            <td class="description last">a key-value object with
-context -> num to require the tip to be shown in a specific context for the
-given number of times. See RandomTips.setContext.</td>
+            <td class="description last"><p>a key-value object with
+context -&gt; num to require the tip to be shown in a specific context for the
+given number of times. See <code>RandomTips.setContext</code>.</p></td>
         </tr>
 
     
@@ -571,9 +815,9 @@ given number of times. See RandomTips.setContext.</td>
                 </td>
             
 
-            <td class="description last">a key-value object with
-context -> num to only show the tip in a specific context at most for the
-given number of times. See RandomTips.setContext.</td>
+            <td class="description last"><p>a key-value object with
+context -&gt; num to only show the tip in a specific context at most for the
+given number of times. See <code>RandomTips.setContext</code>.</p></td>
         </tr>
 
     
@@ -608,14 +852,16 @@ given number of times. See RandomTips.setContext.</td>
             
                 <td class="default">
                 
+                    <code>false</code>
+                
                 </td>
             
 
-            <td class="description last">Randomizes the display with a
-chance of 50% by default (when set to "true"). You can override that percentage
+            <td class="description last"><p>Randomizes the display with a
+chance of 50% by default (when set to <code>true</code>). You can override that percentage
 (as an integer, e.g. 0.2 instead of 20%).
 Note that the tip message display in general is already randomized
-with a chance of 20%, see RandomTips.GLOBAL_RANDOMIZE.</td>
+with a chance of 20%, see <code>RandomTips.GLOBAL_RANDOMIZE</code>.</p></td>
         </tr>
 
     
@@ -648,8 +894,8 @@ with a chance of 20%, see RandomTips.GLOBAL_RANDOMIZE.</td>
                 </td>
             
 
-            <td class="description last">The text to actually show. It is passed to the
-MessageHandler, so you can (& should) use a translatable string here.</td>
+            <td class="description last"><p>The text to actually show. It is passed to the
+<code>MessageHandler</code>, so you can (&amp; should) use a translatable string here.</p></td>
         </tr>
 
     
@@ -684,8 +930,8 @@ MessageHandler, so you can (& should) use a translatable string here.</td>
                 </td>
             
 
-            <td class="description last">adds an action button to the message, is
-passed as-is to the MessageHandler module.
+            <td class="description last"><p>adds an action button to the message, is
+passed as-is to the <code>MessageHandler</code> module.</p>
                 <h6>Properties</h6>
 
 <table class="props">
@@ -726,7 +972,7 @@ passed as-is to the MessageHandler module.
 
             
 
-            <td class="description last">the text to use for the button</td>
+            <td class="description last"><p>the text to use for the button</p></td>
         </tr>
 
     
@@ -752,8 +998,8 @@ passed as-is to the MessageHandler module.
 
             
 
-            <td class="description last">the link or function to
-execute on click</td>
+            <td class="description last"><p>the link or function to
+execute on click</p></td>
         </tr>
 
     
@@ -761,6 +1007,42 @@ execute on click</td>
 </table>
 
             </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>showTip</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="global.html#callbackShowTip">callbackShowTip</a></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>evaluate via a custom function
+whether to show or not to show the tip</p></td>
         </tr>
 
     
@@ -773,7 +1055,7 @@ execute on click</td>
 
 
 <div class="description">
-    The settings/constraints for a tip, represented in an object.
+    <p>The settings/constraints for a tip, represented in an object.</p>
 </div>
 
 
@@ -811,11 +1093,17 @@ execute on click</td>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Jan 20 2019 11:55:44 GMT+0100 (Mitteleuropäische Normalzeit) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Jan 20 2019 20:00:41 GMT+0100 (Mitteleuropäische Normalzeit) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>
 <script src="scripts/linenumber.js"></script>
+
+<script src="scripts/jquery-3.1.1.min.js"></script>
+
+<script src="scripts/search.js"></script>
+
+
 
 
 </body>

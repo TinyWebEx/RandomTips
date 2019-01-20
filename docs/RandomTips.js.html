@@ -26,7 +26,9 @@
 
 <nav >
     
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-RandomTips.html">RandomTips</a><ul class='methods'><li data-type='method'><a href="module-RandomTips.html#.init">init</a></li><li data-type='method'><a href="module-RandomTips.html#.setContext">setContext</a></li><li data-type='method'><a href="module-RandomTips.html#.showRandomTip">showRandomTip</a></li><li data-type='method'><a href="module-RandomTips.html#.showRandomTipIfWanted">showRandomTipIfWanted</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#tips">tips</a></li></ul>
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/TinyWebEx/" >All TinyWebExt modules</a></h2><h3>Modules</h3><ul><li><a href="module-RandomTips.html">RandomTips</a><ul class='methods'><li data-type='method'><a href="module-RandomTips.html#.init">init</a></li><li data-type='method'><a href="module-RandomTips.html#.setContext">setContext</a></li><li data-type='method'><a href="module-RandomTips.html#.showRandomTip">showRandomTip</a></li><li data-type='method'><a href="module-RandomTips.html#.showRandomTipIfWanted">showRandomTipIfWanted</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#tips">tips</a></li></ul>
 </nav>
 
 <div id="main">
@@ -56,20 +58,80 @@ import debounce from "../lodash/debounce.js";
 import * as AddonSettings from "../AddonSettings/AddonSettings.js";
 import * as CustomMessages from "../MessageHandler/CustomMessages.js";
 
+/**
+ * The saved settings of a specific tip.
+ *
+ *
+ * @typedef {Object} TipConfigObject
+ * @property {integer} shownCount how often the tip has already been shown
+ * @property {integer} dismissedCount how often the tip has already been dismissed
+ * @property {Object.&lt;string, integer>} [shownContext] how often the tip has
+ * already been shown in a specific context. The aquivalent to {@link TipObject#shownInContext}
+ * See {@link module:RandomTips.setContext|setContext}}.
+ */
+
+/**
+ * The configuration stored by this module.
+ *
+ * It is stored in the key {@link TIP_SETTING_STORAGE_ID} in the data storage.
+ *
+ * @typedef {Object} ModuleConfig
+ * @property {Object.&lt;string, module:RandomTips~TipConfigObject>} tips config for each tip
+ * @property {integer} triggeredOpen how often the whole module/add-on has been
+ * triggered, i.e. how often the {@link module:RandomTips.init|init} method has been called.
+ */
+
 const TIP_MESSAGE_BOX_ID = "messageTips";
 const TIP_SETTING_STORAGE_ID = "randomTips";
 const GLOBAL_RANDOMIZE = 0.2; // (%)
 const DEBOUNCE_SAVING = 1000; // ms
 const MESSAGE_TIP_ID = "messageTip";
 
-/** @see {@link config/tips.js} **/
+// default values/settings for tip/tipconfig
+/**
+ * @private
+ * @type {TipObject}
+ */
+const DEFAULT_TIP_SPEC = Object.freeze({
+    requiredTriggers: 10,
+    randomizeDisplay: false,
+    allowDismiss: true
+});
+
+/**
+ * @private
+ * @type {TipConfigObject}
+ */
+const DEFAULT_TIP_CONFIG = Object.freeze({
+    shownCount: 0,
+    dismissedCount: 0,
+    shownContext: {}
+});
+
+/**
+ * @private
+ * @type {TipObject[]}
+ * @see {@link tips}
+ */
 let tips;
 
-let tipConfig = {
+/**
+ * @private
+ * @type {ModuleConfig}
+ */
+let moduleConfig = {
     tips: {}
 };
 
-let tipShown = null;
+/**
+ * @private
+ * @type {TipConfigObject}
+ */
+let tipShowing = null;
+/**
+ * @private
+ * @type {string}
+ */
 let context = null;
 
 /**
@@ -94,16 +156,16 @@ function messageDismissed(param) {
     const elMessage = param.elMessage;
 
     const id = elMessage.dataset.tipId;
-    if (tipShown.id !== id) {
+    if (tipShowing.id !== id) {
         throw new Error("cached tip and dismissed tip differ");
     }
 
     // update config
-    tipConfig.tips[id].dismissedCount = (tipConfig.tips[id].dismissedCount || 0) + 1;
+    moduleConfig.tips[id].dismissedCount = (moduleConfig.tips[id].dismissedCount || 0) + 1;
     saveConfig();
 
     // cleanup values
-    tipShown = null;
+    tipShowing = null;
     delete elMessage.dataset.tipId;
 
     console.info(`Tip ${id} has been dismissed.`);
@@ -127,23 +189,54 @@ function randomizePassed(percentage) {
  *
  * @function
  * @private
- * @param  {Object} tipSpec
+ * @param  {TipObject} tipSpec
+ * @param  {TipConfigObject} thisTipConfig the settings of the tip
  * @returns {void}
  */
-function showTip(tipSpec) {
-    // default settings
-    const allowDismiss = tipSpec.allowDismiss !== undefined ? tipSpec.allowDismiss : true;
-
+function showTip(tipSpec, thisTipConfig) {
     const elMessage = CustomMessages.getHtmlElement(MESSAGE_TIP_ID);
     elMessage.dataset.tipId = tipSpec.id;
-    CustomMessages.showMessage(MESSAGE_TIP_ID, tipSpec.text, allowDismiss, tipSpec.actionButton);
+    CustomMessages.showMessage(MESSAGE_TIP_ID, tipSpec.text, tipSpec.allowDismiss, tipSpec.actionButton);
 
     // update config
-    tipConfig.tips[tipSpec.id].shownCount = (tipConfig.tips[tipSpec.id].shownCount || 0) + 1;
-    tipConfig.tips[tipSpec.id].shownContext[context] = (tipConfig.tips[tipSpec.id].shownContext[context] || 0) + 1;
+    thisTipConfig.shownCount = thisTipConfig.shownCount + 1;
+    thisTipConfig.shownContext[context] = (thisTipConfig.shownContext[context] || 0) + 1;
     saveConfig();
 
-    tipShown = tipSpec;
+    tipShowing = tipSpec;
+}
+
+/**
+ * Returns true or false at random. The passed procentage indicates how
+ * much of the calls should return "true" on average.
+ *
+ * @function
+ * @private
+ * @param  {TipObject} tipSpecOrig
+ * @returns {Array.&lt;TipObject, Object>}
+ */
+function applyTipSpecAndConfigDefaults(tipSpecOrig) {
+    // shallow-clone object (no deep object are being modified)
+    const tipSpec = Object.assign({}, DEFAULT_TIP_SPEC, tipSpecOrig);
+
+    // also convert to default value if just set to "true"
+    if (tipSpec.randomizeDisplay === true) {
+        // default value for randomizeDisplay = 0.5
+        tipSpec.randomizeDisplay = 0.5;
+    }
+
+    // create option if needed
+    let thisTipConfig = moduleConfig.tips[tipSpec.id];
+    if (thisTipConfig === undefined) {
+        // deep-clone default object
+        thisTipConfig = JSON.parse(JSON.stringify(DEFAULT_TIP_CONFIG));
+        // save it actually in config
+        moduleConfig.tips[tipSpec.id] = thisTipConfig;
+        saveConfig();
+    }
+
+    console.log("Applied default values for tip spec and tip config:", tipSpec, thisTipConfig);
+    return [tipSpec, thisTipConfig];
 }
 
 /**
@@ -152,47 +245,47 @@ function showTip(tipSpec) {
  *
  * @function
  * @private
- * @param  {Object} tipSpec
+ * @param  {TipObject} tipSpec
+ * @param  {TipConfigObject} thisTipConfig
+ * @param  {Object} tipSpecOrig
  * @returns {bool}
  */
-function shouldBeShown(tipSpec) {
-    // default settings
-    const requiredTriggers = tipSpec.requiredTriggers !== undefined ? tipSpec.requiredTriggers : 10;
-
-    // create option if needed
-    if (tipConfig.tips[tipSpec.id] === undefined) {
-        tipConfig.tips[tipSpec.id] = {};
-        tipConfig.tips[tipSpec.id].shownContext = {};
+function shouldBeShown(tipSpec, thisTipConfig, tipSpecOrig) {
+    if (tipSpec.showTip) {
+        const returnValue = tipSpec.showTip(tipSpec, thisTipConfig, tipSpecOrig, moduleConfig);
         saveConfig();
-    }
-
-    // require some global triggers, if needed
-    if (tipConfig.triggeredOpen &lt; requiredTriggers) {
-        return false;
-    }
-    // require some additional randomness if needed
-    if (tipSpec.randomizeDisplay) {
-        // default value for tip is 50%
-        const randomizeDisplay = tipSpec.randomizeDisplay !== true ? tipSpec.randomizeDisplay : 0.5;
-
-        // 1 : x -> if one number is not selected, do not display result
-        if (!randomizePassed(randomizeDisplay)) {
-            return false;
+        switch (returnValue) {
+        // pass-through booleans
+        case true:
+        case false:
+            return returnValue;
+        case null:
+            // continue checking when null is returned
+            break;
+        default:
+            throw new Error(`tipSpec.showTip was expected to return a boolean
+                or null, but returned "${returnValue}".`);
         }
     }
 
-    const tipShowCount = tipConfig.tips[tipSpec.id].shownCount || 0;
-    const tipDismissed = tipConfig.tips[tipSpec.id].dismissedCount || 0;
+    // require some global triggers, if needed
+    if (moduleConfig.triggeredOpen &lt; tipSpec.requiredTriggers) {
+        return false;
+    }
+    // 1 : x -> if one number is not selected, do not display result
+    if (tipSpec.randomizeDisplay &amp;&amp; !randomizePassed(tipSpec.randomizeDisplay)) {
+        return false;
+    }
 
     // do not show if it has been dismissed enough times
-    if (tipSpec.maximumDismiss &amp;&amp; tipDismissed >= tipSpec.maximumDismiss) {
+    if (tipSpec.maximumDismiss &amp;&amp; thisTipConfig.dismissedCount >= tipSpec.maximumDismiss) {
         return false;
     }
 
     // block when it is shown too much times in a given context
     if (tipSpec.maximumInContest) {
         if (context in tipSpec.maximumInContest) {
-            const tipShownInCurrentContext = tipConfig.tips[tipSpec.id].shownContext[context] || 0;
+            const tipShownInCurrentContext = moduleConfig.tips[tipSpec.id].shownContext[context] || 0;
 
             if (tipShownInCurrentContext >= tipSpec.maximumInContest[context]) {
                 return false;
@@ -217,7 +310,7 @@ function shouldBeShown(tipSpec) {
     // check context check if needed
     if (tipSpec.showInContext) {
         if (context in tipSpec.showInContext) {
-            const tipShownInCurrentContext = tipConfig.tips[tipSpec.id].shownContext[context] || 0;
+            const tipShownInCurrentContext = moduleConfig.tips[tipSpec.id].shownContext[context] || 0;
 
             if (tipShownInCurrentContext &lt; tipSpec.showInContext[context]) {
                 return true;
@@ -225,8 +318,8 @@ function shouldBeShown(tipSpec) {
         }
     }
 
-    return (tipSpec.requiredShowCount === null || tipShowCount &lt; tipSpec.requiredShowCount) // not already shown enough times already?
-        || (requiredDismissCount !== null &amp;&amp; tipDismissed &lt; requiredDismissCount); // not dismissed enough times?
+    return (tipSpec.requiredShowCount === null || thisTipConfig.shownCount &lt; tipSpec.requiredShowCount) // not already shown enough times already?
+        || (requiredDismissCount !== null &amp;&amp; thisTipConfig.dismissedCount &lt; requiredDismissCount); // not dismissed enough times?
 }
 
 /**
@@ -255,9 +348,12 @@ export function showRandomTip() {
 
     // randomly select element
     const randomNumber = Math.floor(Math.random() * tips.length);
-    const tipSpec = tips[randomNumber];
+    const tipSpecOrig = tips[randomNumber];
 
-    if (!shouldBeShown(tipSpec)) {
+    // prepare tip spec
+    const [tipSpec, thisTipConfig] = applyTipSpecAndConfigDefaults(tipSpecOrig);
+
+    if (!shouldBeShown(tipSpec, thisTipConfig, tipSpecOrig)) {
         // remove tip
         tips.splice(randomNumber, 1);
 
@@ -268,7 +364,7 @@ export function showRandomTip() {
 
     console.info("selected tip to be shown:", randomNumber, tipSpec);
 
-    showTip(tipSpec);
+    showTip(tipSpec, thisTipConfig);
 }
 
 /**
@@ -278,7 +374,6 @@ export function showRandomTip() {
  * @returns {void}
  */
 export function showRandomTipIfWanted() {
-    tipConfig.triggeredOpen = (tipConfig.triggeredOpen || 0) + 1;
     saveConfig();
 
     // randomize tip showing in general
@@ -305,7 +400,7 @@ export function init(tipsToShow) {
     // load function
     // We need to assign it here to make it testable.
     saveConfig = debounce(() => {
-        AddonSettings.set(TIP_SETTING_STORAGE_ID, tipConfig);
+        AddonSettings.set(TIP_SETTING_STORAGE_ID, moduleConfig);
     }, DEBOUNCE_SAVING);
 
     // register HTMLElement
@@ -313,7 +408,9 @@ export function init(tipsToShow) {
     CustomMessages.setHook(MESSAGE_TIP_ID, "dismissStart", messageDismissed);
 
     return AddonSettings.get(TIP_SETTING_STORAGE_ID).then((randomTips) => {
-        tipConfig = randomTips;
+        moduleConfig = randomTips;
+        // count one open trigger
+        moduleConfig.triggeredOpen = (moduleConfig.triggeredOpen || 0) + 1;
     });
 }
 </code></pre>
@@ -330,11 +427,17 @@ export function init(tipsToShow) {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Jan 20 2019 11:55:44 GMT+0100 (Mitteleuropäische Normalzeit) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Jan 20 2019 20:00:41 GMT+0100 (Mitteleuropäische Normalzeit) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>
 <script src="scripts/linenumber.js"></script>
+
+<script src="scripts/jquery-3.1.1.min.js"></script>
+
+<script src="scripts/search.js"></script>
+
+
 
 
 </body>
