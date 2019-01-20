@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Tips - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/TinyWebEx/" >All TinyWebExt modules</a></h2><h3>Modules</h3><ul><li><a href="module-RandomTips.html">RandomTips</a><ul class='methods'><li data-type='method'><a href="module-RandomTips.html#.init">init</a></li><li data-type='method'><a href="module-RandomTips.html#.setContext">setContext</a></li><li data-type='method'><a href="module-RandomTips.html#.showRandomTip">showRandomTip</a></li><li data-type='method'><a href="module-RandomTips.html#.showRandomTipIfWanted">showRandomTipIfWanted</a></li></ul></li><li><a href="module-Tips.html">Tips</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">Tips</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        
+            
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+                <div class="description"><p>Data of the random tips.</p></div>
+            
+
+            
+                
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="examples_Tips.js.html">examples/Tips.js</a>, <a href="examples_Tips.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+        
+        </div>
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id=".tips"><span class="type-signature">(static, constant) </span>tips<span class="type-signature"> :Array.&lt;TipObject></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="examples_Tips.js.html">examples/Tips.js</a>, <a href="examples_Tips.js.html#line118">line 118</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>The list of all tips. (now exported)</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Array.&lt;TipObject></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+        <h3 class="subsection-title">Type Definitions</h3>
+
+        
+                
+
+    
+
+    <h4 class="name" id="~callbackShowTip"><span class="type-signature"></span>callbackShowTip<span class="signature">(tipSpec, thisTipConfig, tipSpecOrig, moduleConfig)</span><span class="type-signature"> &rarr; {boolean|null}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="examples_Tips.js.html">examples/Tips.js</a>, <a href="examples_Tips.js.html#line49">line 49</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>Custom function to check whether a tip shall be shown or not.</p>
+<p><strong>Attention:</strong> This is evaluated before all other constraints were evaluated.
+Be careful before returning <code>true</code>, you may actually want to return <code>null</code>.</p>
+<ul>
+<li>If you return <code>true</code>, it means you <strong>force</strong>(!) the tip to be shown. This
+overrides the usual conditions and shows the tip immediately.</li>
+<li>If you return <code>false</code>, it means you disallow the tip to be shown.</li>
+<li>If <code>null</code> is returned, the usual (other) conditions that determinate whether
+to show the tip are evaluated.
+If you throw something, this cancels the whole tip selection process.</li>
+</ul>
+<p>Note that you can actually <em>modify</em> the values of the first two parameters, i.e.
+<code>tipSpec</code> and <code>thisTipConfig</code>. If you modify the config, it will be saved
+automatically.
+The difference between <code>tipSpec</code> and <code>tipSpecOrig</code> is, that in <code>tipSpec</code> the
+default values of the tips have been added/modified, if needed and that
+<code>tipSpecOrig</code> is the original as you have specified it in <code>TipObject</code>.</p>
+<p>For stylistic reasons, it is recommend to not hardcode the function into the
+this file, but use a separate file/module.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>tipSpec</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">TipObject</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the TipObject, merged with default values</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>thisTipConfig</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-RandomTips.html#~TipConfigObject">module:RandomTips~TipConfigObject</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the settings of the tip</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>tipSpecOrig</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">TipObject</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the original, unmodified (frozen) TipObject
+                                 of the tip</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>moduleConfig</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="module-RandomTips.html#~ModuleConfig">module:RandomTips~ModuleConfig</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the whole config of this module</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+|
+
+<span class="param-type">null</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+            
+                
+<h4 class="name" id="~TipObject">TipObject</h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="examples_Tips.js.html">examples/Tips.js</a>, <a href="examples_Tips.js.html#line8">line 8</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>id</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>just some ID</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>requiredShowCount</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">integer</span>
+|
+
+<span class="param-type">null</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Shows the message x times; set
+to <code>null</code> to show infinitively. This is the maximum value.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>allowDismiss</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>true</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>set to false to disallow dismissing
+the message. This likely makes no sense for any tip, so the default is true.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>requireDismiss</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+|
+
+<span class="param-type">integer</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>false</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>show the message, if it is
+not, at least, dismissed for x times. Alternatively set to true to require
+that message is dismissed the exact same number as requiredShowCount states,
+i.e. only dismissed count as &quot;tip shown&quot;.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>maximumDismiss</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">integer</span>
+|
+
+<span class="param-type">null</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>null</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>hides the message, if it
+has been dismissed x times.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>requiredTriggers</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">integer</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>10</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>require some displays (&quot;triggers&quot;)
+of (any) add-on page before showing tip. This is effectively just a minimum
+limit, so it is not shown too &quot;early&quot;.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>showInContext</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object.&lt;string, integer></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>a key-value object with
+context -&gt; num to require the tip to be shown in a specific context for the
+given number of times. See <code>RandomTips.setContext</code>.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>maximumInContest</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object.&lt;string, integer></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>a key-value object with
+context -&gt; num to only show the tip in a specific context at most for the
+given number of times. See <code>RandomTips.setContext</code>.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>randomizeDisplay</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">bool</span>
+|
+
+<span class="param-type">integer</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>false</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Randomizes the display with a
+chance of 50% by default (when set to <code>true</code>). You can override that percentage
+(as an integer, e.g. 0.2 instead of 20%).
+Note that the tip message display in general is already randomized
+with a chance of 20%, see <code>RandomTips.GLOBAL_RANDOMIZE</code>.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>text</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>The text to actually show. It is passed to the
+<code>MessageHandler</code>, so you can (&amp; should) use a translatable string here.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>actionButton</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>adds an action button to the message, is
+passed as-is to the <code>MessageHandler</code> module.</p>
+                <h6>Properties</h6>
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>text</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the text to use for the button</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>action</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>the link or function to
+execute on click</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>showTip</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">callbackShowTip</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>evaluate via a custom function
+whether to show or not to show the tip</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<div class="description">
+    <p>The settings/constraints for a tip, represented in an object.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+            
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Jan 20 2019 22:04:04 GMT+0100 (Mitteleuropäische Normalzeit) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+
+</body>
+</html>

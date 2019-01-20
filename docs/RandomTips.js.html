@@ -1,4 +1,47 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>RandomTips.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://github.com/TinyWebEx/" >All TinyWebExt modules</a></h2><h3>Modules</h3><ul><li><a href="module-RandomTips.html">RandomTips</a><ul class='methods'><li data-type='method'><a href="module-RandomTips.html#.init">init</a></li><li data-type='method'><a href="module-RandomTips.html#.setContext">setContext</a></li><li data-type='method'><a href="module-RandomTips.html#.showRandomTip">showRandomTip</a></li><li data-type='method'><a href="module-RandomTips.html#.showRandomTipIfWanted">showRandomTipIfWanted</a></li></ul></li><li><a href="module-Tips.html">Tips</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">RandomTips.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * Shows random tips to the user, if wanted.
  *
  * @public
@@ -21,7 +64,7 @@ import * as CustomMessages from "../MessageHandler/CustomMessages.js";
  * @typedef {Object} TipConfigObject
  * @property {integer} shownCount how often the tip has already been shown
  * @property {integer} dismissedCount how often the tip has already been dismissed
- * @property {Object.<string, integer>} [shownContext] how often the tip has
+ * @property {Object.&lt;string, integer>} [shownContext] how often the tip has
  * already been shown in a specific context. The aquivalent to {@link TipObject#shownInContext}
  * See {@link module:RandomTips.setContext|setContext}}.
  */
@@ -33,7 +76,7 @@ import * as CustomMessages from "../MessageHandler/CustomMessages.js";
  *
  * @public
  * @typedef {Object} ModuleConfig
- * @property {Object.<string, module:RandomTips~TipConfigObject>} tips config for each tip
+ * @property {Object.&lt;string, module:RandomTips~TipConfigObject>} tips config for each tip
  * @property {integer} triggeredOpen how often the whole module/add-on has been
  * triggered, i.e. how often the {@link module:RandomTips.init|init} method has been called.
  */
@@ -136,7 +179,7 @@ function messageDismissed(param) {
  * @returns {bool}
  */
 function randomizePassed(percentage) {
-    return (Math.random() < percentage);
+    return (Math.random() &lt; percentage);
 }
 
 /**
@@ -166,7 +209,7 @@ function showTip(tipSpec, thisTipConfig) {
  *
  * @private
  * @param  {TipObject} tipSpecOrig
- * @returns {Array.<TipObject, Object>}
+ * @returns {Array.&lt;TipObject, Object>}
  */
 function applyTipSpecAndConfigDefaults(tipSpecOrig) {
     // shallow-clone object (no deep object are being modified)
@@ -221,16 +264,16 @@ function shouldBeShown(tipSpec, thisTipConfig, tipSpecOrig) {
     }
 
     // require some global triggers, if needed
-    if (moduleConfig.triggeredOpen < tipSpec.requiredTriggers) {
+    if (moduleConfig.triggeredOpen &lt; tipSpec.requiredTriggers) {
         return false;
     }
     // 1 : x -> if one number is not selected, do not display result
-    if (tipSpec.randomizeDisplay && !randomizePassed(tipSpec.randomizeDisplay)) {
+    if (tipSpec.randomizeDisplay &amp;&amp; !randomizePassed(tipSpec.randomizeDisplay)) {
         return false;
     }
 
     // do not show if it has been dismissed enough times
-    if (tipSpec.maximumDismiss && thisTipConfig.dismissedCount >= tipSpec.maximumDismiss) {
+    if (tipSpec.maximumDismiss &amp;&amp; thisTipConfig.dismissedCount >= tipSpec.maximumDismiss) {
         return false;
     }
 
@@ -264,14 +307,14 @@ function shouldBeShown(tipSpec, thisTipConfig, tipSpecOrig) {
         if (context in tipSpec.showInContext) {
             const tipShownInCurrentContext = moduleConfig.tips[tipSpec.id].shownContext[context] || 0;
 
-            if (tipShownInCurrentContext < tipSpec.showInContext[context]) {
+            if (tipShownInCurrentContext &lt; tipSpec.showInContext[context]) {
                 return true;
             }
         }
     }
 
-    return (tipSpec.requiredShowCount === null || thisTipConfig.shownCount < tipSpec.requiredShowCount) // not already shown enough times already?
-        || (requiredDismissCount !== null && thisTipConfig.dismissedCount < requiredDismissCount); // not dismissed enough times?
+    return (tipSpec.requiredShowCount === null || thisTipConfig.shownCount &lt; tipSpec.requiredShowCount) // not already shown enough times already?
+        || (requiredDismissCount !== null &amp;&amp; thisTipConfig.dismissedCount &lt; requiredDismissCount); // not dismissed enough times?
 }
 
 /**
@@ -342,7 +385,7 @@ export function showRandomTipIfWanted() {
  *
  * @public
  * @param {TipObject[]} tipsToShow the tips object to init
- * @returns {Promise.<void>}
+ * @returns {Promise.&lt;void>}
  */
 export function init(tipsToShow) {
     // use local shallow copy, so we can modify it
@@ -365,3 +408,26 @@ export function init(tipsToShow) {
         moduleConfig.triggeredOpen = (moduleConfig.triggeredOpen || 0) + 1;
     });
 }
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Jan 20 2019 22:04:04 GMT+0100 (Mitteleuropäische Normalzeit) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+
+</body>
+</html>
