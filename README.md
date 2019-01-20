@@ -1,7 +1,7 @@
 # TinyWebEx RandomTips
 
 Makes it possibly to easily specify tips to show to the user in a random, non-obstrusive way and allows you to set constraints for each tip.
-It is basically an extension of the [MessageHandler module](../MessageHandler) and automatically shows such a tip from a list of tips you specify.
+It is basically an extension of the [MessageHandler module](https://github.com/TinyWebEx/MessageHandler) and automatically shows such a tip from a list of tips you specify.
 
 ## Features
 
@@ -12,7 +12,7 @@ It is basically an extension of the [MessageHandler module](../MessageHandler) a
 
 ## HTML Setup
 
-As the [MessageHandler module](../MessageHandler) requires the message HTML to be pre-defined, you have to define it for this module, too. In your `.message-container` you need to add this:
+As the [MessageHandler module](https://github.com/TinyWebEx/MessageHandler) requires the message HTML to be pre-defined, you have to define it for this module, too. In your `.message-container` you need to add this:
 
 ```html
 <div id="messageTips" aria-label="info message" class="message-box info invisible fade-hide">
@@ -62,11 +62,11 @@ You can thus easily limit where (i.e. in which "contexts") your tip may be shown
 
 This module needs to save some data in order to count the times the addon has been "opened" (i.e. the function has been triggered) or it needs to be saved how often a specific tip has been shown (in some context etc.).
 
-For getting and saving the data, it uses the [AddonSettings module](h../AddonSettings).
+For getting and saving the data, it uses the [AddonSettings module](https://github.com/TinyWebEx/AddonSettings).
 It does use the setting name `randomTips` and includes all data in potentially multiple nested objects there.
 Note that it itself does add another level of caching, i.e. it saves that object in it's module when it's `init` method is called.
 
-In order to properly use this module, you have to set the following [default options](../AddonSettings#setup-default-value-store), i.e. add this to your `DEFAULT_SETTINGS`:
+In order to properly use this module, you have to set the following [default options](https://github.com/TinyWebEx/AddonSettings#user-content-setup-default-value-store), i.e. add this to your `DEFAULT_SETTINGS`:
 ```js
 randomTips: {
     tips: {}
