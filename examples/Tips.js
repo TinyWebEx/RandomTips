@@ -31,8 +31,8 @@
  * {@link MessageHandler}, so you can (& should) use a translatable string here.
  * @property {Object} [actionButton] adds an action button to the message, is
  * passed as-is to the {@link MessageHandler} module.
- * @property {string} [actionButton.text] the text to use for the button
- * @property {string|function} [actionButton.action] the link or function to
+ * @property {string} actionButton.text the text to use for the button
+ * @property {string|function} actionButton.action the link or function to
  * execute on click
  */
 

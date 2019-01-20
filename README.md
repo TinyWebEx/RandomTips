@@ -12,7 +12,7 @@ It is basically an extension of the [MessageHandler module](https://github.com/T
 
 ## HTML Setup
 
-As the [MessageHandler module](https://github.com/TinyWebEx/MessageHandler requires the message HTML to be pre-defined, you have to define it for this module, too. In your `.message-container` you need to add this:
+As the [MessageHandler module](https://github.com/TinyWebEx/MessageHandler) requires the message HTML to be pre-defined, you have to define it for this module, too. In your `.message-container` you need to add this:
 
 ```html
 <div id="messageTips" aria-label="info message" class="message-box info invisible fade-hide">
