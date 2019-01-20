@@ -2,7 +2,7 @@
  * Data of the random tips.
  *
  * @public
- * @module Tips
+ * @module data/Tips
  */
 
 /**

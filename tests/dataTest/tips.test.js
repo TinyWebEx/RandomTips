@@ -1,3 +1,15 @@
+/**
+ * Unit test for the data specification of the tips.
+ *
+ * You can embed it in your unit tests, if you want.
+ *
+ * @public
+ * @module tipsTest
+ * @requires mocha
+ * @requires chai
+ * @requires data/Tips
+ */
+
 import "https://unpkg.com/mocha@5.2.0/mocha.js"; /* globals mocha */
 import "https://unpkg.com/chai@4.1.2/chai.js"; /* globals chai */
 
