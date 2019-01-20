@@ -1,4 +1,10 @@
 /**
+ * Data of the random tips.
+ *
+ * @module RandomTips
+ */
+
+/**
  * The settings/constraints for a tip, represented in an object.
  *
  * @typedef {Object} TipObject
@@ -22,7 +28,7 @@
  * @property {Object.<string, integer>} [maximumInContest] a key-value object with
  * context -> num to only show the tip in a specific context at most for the
  * given number of times. See {@link RandomTips.setContext}.
- * @property {bool|integer} [randomizeDisplay] Randomizes the display with a
+ * @property {bool|integer} [randomizeDisplay=false] Randomizes the display with a
  * chance of 50% by default (when set to "true"). You can override that percentage
  * (as an integer, e.g. 0.2 instead of 20%).
  * Note that the tip message display in general is already randomized

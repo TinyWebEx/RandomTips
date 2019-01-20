@@ -19,6 +19,18 @@ const GLOBAL_RANDOMIZE = 0.2; // (%)
 const DEBOUNCE_SAVING = 1000; // ms
 const MESSAGE_TIP_ID = "messageTip";
 
+// default values/settings for tip/tipconfig
+const DEFAULT_TIP_SPEC = Object.freeze({
+    requiredTriggers: 10,
+    randomizeDisplay: false,
+    allowDismiss: true
+});
+const DEFAULT_TIP_CONFIG = Object.freeze({
+    shownCount: 0,
+    dismissedCount: 0,
+    shownContext: {}
+});
+
 /** @see {@link config/tips.js} **/
 let tips;
 
@@ -84,16 +96,13 @@ function randomizePassed(percentage) {
  *
  * @function
  * @private
- * @param  {Object} tipSpec
+ * @param  {TipObject} tipSpec
  * @returns {void}
  */
 function showTip(tipSpec) {
-    // default settings
-    const allowDismiss = tipSpec.allowDismiss !== undefined ? tipSpec.allowDismiss : true;
-
     const elMessage = CustomMessages.getHtmlElement(MESSAGE_TIP_ID);
     elMessage.dataset.tipId = tipSpec.id;
-    CustomMessages.showMessage(MESSAGE_TIP_ID, tipSpec.text, allowDismiss, tipSpec.actionButton);
+    CustomMessages.showMessage(MESSAGE_TIP_ID, tipSpec.text, tipSpec.allowDismiss, tipSpec.actionButton);
 
     // update config
     tipConfig.tips[tipSpec.id].shownCount = (tipConfig.tips[tipSpec.id].shownCount || 0) + 1;
@@ -104,45 +113,61 @@ function showTip(tipSpec) {
 }
 
 /**
+ * Returns true or false at random. The passed procentage indicates how
+ * much of the calls should return "true" on average.
+ *
+ * @function
+ * @private
+ * @param  {TipObject} tipSpecOrig
+ * @returns {[TipObject, Object]}
+ */
+function applyTipSpecAndConfigDefaults(tipSpecOrig) {
+    // shallow-clone object (no deep object are being modified)
+    const tipSpec = Object.assign({}, DEFAULT_TIP_SPEC, tipSpecOrig);
+
+    // also convert to default value if just set to "true"
+    if (tipSpec.randomizeDisplay === true) {
+        // default value for randomizeDisplay = 0.5
+        tipSpec.randomizeDisplay = 0.5;
+    }
+
+    // create option if needed
+    let thisTipConfig = tipConfig.tips[tipSpec.id];
+    if (thisTipConfig === undefined) {
+        // deep-clone default object
+        thisTipConfig = JSON.parse(JSON.stringify(DEFAULT_TIP_CONFIG));
+        // save it actually in config
+        tipConfig.tips[tipSpec.id] = thisTipConfig;
+        saveConfig();
+    }
+
+    console.log("Applied default values for tip spec and tip config:", tipSpec, thisTipConfig);
+    return [tipSpec, thisTipConfig];
+}
+
+/**
  * Returns whether the tip has already be shown enough times or may not
  * be shown, because of some other requirement.
  *
  * @function
  * @private
- * @param  {Object} tipSpec
+ * @param  {TipObject} tipSpec
+ * @param  {Object} thisTipConfig
+ * @param  {Object} tipSpecOrig
  * @returns {bool}
  */
-function shouldBeShown(tipSpec) {
-    // default settings
-    const requiredTriggers = tipSpec.requiredTriggers !== undefined ? tipSpec.requiredTriggers : 10;
-
-    // create option if needed
-    if (tipConfig.tips[tipSpec.id] === undefined) {
-        tipConfig.tips[tipSpec.id] = {};
-        tipConfig.tips[tipSpec.id].shownContext = {};
-        saveConfig();
-    }
-
+function shouldBeShown(tipSpec, thisTipConfig, tipSpecOrig) {
     // require some global triggers, if needed
-    if (tipConfig.triggeredOpen < requiredTriggers) {
+    if (tipConfig.triggeredOpen < tipSpec.requiredTriggers) {
         return false;
     }
-    // require some additional randomness if needed
-    if (tipSpec.randomizeDisplay) {
-        // default value for tip is 50%
-        const randomizeDisplay = tipSpec.randomizeDisplay !== true ? tipSpec.randomizeDisplay : 0.5;
-
-        // 1 : x -> if one number is not selected, do not display result
-        if (!randomizePassed(randomizeDisplay)) {
-            return false;
-        }
+    // 1 : x -> if one number is not selected, do not display result
+    if (tipSpec.randomizeDisplay && !randomizePassed(tipSpec.randomizeDisplay)) {
+        return false;
     }
 
-    const tipShowCount = tipConfig.tips[tipSpec.id].shownCount || 0;
-    const tipDismissed = tipConfig.tips[tipSpec.id].dismissedCount || 0;
-
     // do not show if it has been dismissed enough times
-    if (tipSpec.maximumDismiss && tipDismissed >= tipSpec.maximumDismiss) {
+    if (tipSpec.maximumDismiss && thisTipConfig.dismissedCount >= tipSpec.maximumDismiss) {
         return false;
     }
 
@@ -182,8 +207,8 @@ function shouldBeShown(tipSpec) {
         }
     }
 
-    return (tipSpec.requiredShowCount === null || tipShowCount < tipSpec.requiredShowCount) // not already shown enough times already?
-        || (requiredDismissCount !== null && tipDismissed < requiredDismissCount); // not dismissed enough times?
+    return (tipSpec.requiredShowCount === null || thisTipConfig.shownCount < tipSpec.requiredShowCount) // not already shown enough times already?
+        || (requiredDismissCount !== null && thisTipConfig.dismissedCount < requiredDismissCount); // not dismissed enough times?
 }
 
 /**
@@ -212,9 +237,12 @@ export function showRandomTip() {
 
     // randomly select element
     const randomNumber = Math.floor(Math.random() * tips.length);
-    const tipSpec = tips[randomNumber];
+    const tipSpecOrig = tips[randomNumber];
 
-    if (!shouldBeShown(tipSpec)) {
+    // prepare tip spec
+    const [tipSpec, thisTipConfig] = applyTipSpecAndConfigDefaults(tipSpecOrig);
+
+    if (!shouldBeShown(tipSpec, thisTipConfig, tipSpecOrig)) {
         // remove tip
         tips.splice(randomNumber, 1);
 
