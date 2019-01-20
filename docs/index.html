@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Home - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-RandomTips.html">RandomTips</a><ul class='methods'><li data-type='method'><a href="module-RandomTips.html#.init">init</a></li><li data-type='method'><a href="module-RandomTips.html#.setContext">setContext</a></li><li data-type='method'><a href="module-RandomTips.html#.showRandomTip">showRandomTip</a></li><li data-type='method'><a href="module-RandomTips.html#.showRandomTipIfWanted">showRandomTipIfWanted</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#tips">tips</a></li></ul>
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+    <section class="readme">
+        <article><h1>TinyWebEx RandomTips</h1><p>Makes it possibly to easily specify tips to show to the user in a random, non-obstrusive way and allows you to set constraints for each tip.
+It is basically an extension of the <a href="https://github.com/TinyWebEx/MessageHandler">MessageHandler module</a> and automatically shows such a tip from a list of tips you specify.</p>
+<h2>Features</h2><ul>
+<li>has an extensive and flexible list of contraints you can use to define in which cases a tip should (not) be shown (See <a href="#specifying-tips">&quot;Specifying tips&quot;</a> below)</li>
+<li>easy setup</li>
+<li>low amount of work, after you </li>
+<li>integrates into other TinyWebEx modules for <a href="#html-setup">showing messages</a> and <a href="#addon-settings">saving config values</a></li>
+</ul>
+<h2>HTML Setup</h2><p>As the [MessageHandler module](https://github.com/TinyWebEx/MessageHandler requires the message HTML to be pre-defined, you have to define it for this module, too. In your <code>.message-container</code> you need to add this:</p>
+<pre class="prettyprint source lang-html"><code>&lt;div id=&quot;messageTips&quot; aria-label=&quot;info message&quot; class=&quot;message-box info invisible fade-hide&quot;>
+  &lt;span class=&quot;message-text&quot;>&lt;/span>
+  &lt;a href=&quot;#&quot;>
+    &lt;button class=&quot;message-action-button micro-button info invisible&quot;>&lt;/button>
+  &lt;/a>
+  &lt;img class=&quot;icon-dismiss invisible&quot; src=&quot;/common/img/close.svg&quot; width=&quot;24&quot; height=&quot;24&quot; tabindex=&quot;0&quot; data-i18n data-i18n-aria-label=&quot;__MSG_dismissIconDescription__&quot;>&lt;/span>
+&lt;/div></code></pre><p>It's just the default message markup, it uses the &quot;info&quot; style here and an ID <code>messageTips</code>, so it can find the message and register it.</p>
+<h2>Using</h2><p>A full example of how to use it, is the following:</p>
+<pre class="prettyprint source lang-js"><code>// fetch tips from somewhere..
+
+// init RandomTips
+RandomTips.init(tips).then(() => {
+    RandomTips.setContext(&quot;options&quot;);
+    RandomTips.showRandomTipIfWanted();
+});</code></pre><p>This does the following steps:</p>
+<ol>
+<li>Initializes the module with the list of all tips (the <a href="#specifying-tips">tip data</a>).</li>
+<li>When they are loaded, sets a specific <a href="#context">context</a>, which allows you to show some tips only in some &quot;contexts&quot;.</li>
+<li>Shows a tip with a chance of 20%, so on average only in 1 of 5 triggers of this function, a tip is shown.</li>
+</ol>
+<p>Instead of the last step, you can also use <code>showRandomTip</code> to force it to evaluate showing a tip. Note it still depends on your <a href="#specifying-tips">tip spec</a> whether any (and if so which) tip is actually shown. </p>
+<h2>Specifying tips</h2><p>Tips are specified as a list (array) of objects. Each object represents on tip and lists the constraints under which the tip may be shown or may not be shown. These are evaluated of this module, but only <em>after</em> the global constraint(s), i.e. <code>showRandomTipIfWanted</code> (see <a href="#using">above</a>), passed.</p>
+<p>There are many constraints you can configure/set, so it would not be useful to list them here, but <a href="https://tinywebex.github.io/RandomTips/global.html#TipObject">you can look them up in the JSDOC</a>. Also, you can see the same <a href="examples/Tips.js">in the example source code</a> of a tips specification. You can copy this to your <code>../data</code> dir (relative to this repo), but as the object is loaded via the <code>init</code> method, is it not required to be at any specific place.</p>
+<h3>Context</h3><p>The <code>.setContext</code> method is somewhat special, as it is optional, but recommend to call before you actually (try to) show a tip. It basically just sets a string value to let you specify the context you have when you are calling <code>RandomTips</code>, so you can differentiate whether you are e.g. calling it from your add-on's popup, options page or some other place.
+You can thus easily limit where (i.e. in which &quot;contexts&quot;) your tip may be shown or hidden.</p>
+<h2>Addon settings</h2><p>This module needs to save some data in order to count the times the addon has been &quot;opened&quot; (i.e. the function has been triggered) or it needs to be saved how often a specific tip has been shown (in some context etc.).</p>
+<p>For getting and saving the data, it uses the <a href="https://github.com/TinyWebEx/AddonSettings">AddonSettings module</a>.
+It does use the setting name <code>randomTips</code> and includes all data in potentially multiple nested objects there.
+Note that it itself does add another level of caching, i.e. it saves that object in it's module when it's <code>init</code> method is called.</p>
+<p>In order to properly use this module, you have to set the following <a href="https://github.com/TinyWebEx/AddonSettings#user-content-setup-default-value-store">default options</a>, i.e. add this to your <code>DEFAULT_SETTINGS</code>:</p>
+<pre class="prettyprint source lang-js"><code>randomTips: {
+    tips: {}
+}</code></pre><h3>Tests</h3><p>It is recommend that the tip objects is static and frozen. To be able to easily test this, <a href="./tests/dataTest/tips.test.js">a test spec for this is included in this repo</a>. Note if you want to include it as it is, it only works if the tip data is saved in <code>../data/Tips.js</code> (relative to this repo).</p></article>
+    </section>
+
+
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sun Jan 20 2019 11:45:32 GMT+0100 (Mitteleuropäische Normalzeit) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+
+</body>
+</html>

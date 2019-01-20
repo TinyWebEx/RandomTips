@@ -51,7 +51,7 @@ Instead of the last step, you can also use `showRandomTip` to force it to evalua
 
 Tips are specified as a list (array) of objects. Each object represents on tip and lists the constraints under which the tip may be shown or may not be shown. These are evaluated of this module, but only _after_ the global constraint(s), i.e. `showRandomTipIfWanted` (see [above](#using)), passed.
 
-There are many constraints you can configure/set, so it would not be useful to list them here, but [you can look them up in the JSDOC](). Also, you can see the same [in the example source code](examples/Tips.js) of a tips specification. You can copy this to your `../data` dir (relative to this repo), but as the object is loaded via the `init` method, is it not required to be at any specific place.
+There are many constraints you can configure/set, so it would not be useful to list them here, but [you can look them up in the JSDOC](https://tinywebex.github.io/RandomTips/global.html#TipObject). Also, you can see the same [in the example source code](examples/Tips.js) of a tips specification. You can copy this to your `../data` dir (relative to this repo), but as the object is loaded via the `init` method, is it not required to be at any specific place.
 
 ### Context
 
