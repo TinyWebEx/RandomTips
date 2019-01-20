@@ -7,8 +7,8 @@
  *
  * @typedef {Object} TipObject
  * @property {string} id just some ID
- * @property {integer|null} requiredShowCount shows the message x times; set
- * to `null` to show infinitively
+ * @property {integer|null} requiredShowCount Shows the message x times; set
+ * to `null` to show infinitively. This is the maximum value.
  * @property {bool} [allowDismiss=true] set to false to disallow dismissing
  * the message. This likely makes no sense for any tip, so the default is true.
  * @property {bool|integer} [requireDismiss=false] show the message, if it is
@@ -38,6 +38,40 @@
  * @property {string} actionButton.text the text to use for the button
  * @property {string|function} actionButton.action the link or function to
  * execute on click
+ * @property {callbackShowTip} [showTip] evaluate via a custom function
+ * whether to show or not to show the tip
+ */
+
+/**
+ * Custom function to check whether a tip shall be shown or not.
+ *
+ * **Attention:** This is evaluated before all other constraints were evaluated.
+ * Be careful before returning `true`, you may actually want to return `null`.
+ *
+ * * If you return `true`, it means you **force**(!) the tip to be shown. This
+ *   overrides the usual conditions and shows the tip immediately.
+ * * If you return `false`, it means you disallow the tip to be shown.
+ * * If `null` is returned, the usual (other) conditions that determinate whether
+ *   to show the tip are evaluated.
+ * If you throw something, this cancels the whole tip selection process.
+ *
+ * Note that you can actually _modify_ the values of the first two parameters, i.e.
+ * `tipSpec` and `thisTipConfig`. If you modify the config, it will be saved
+ * automatically.
+ * The difference between `tipSpec` and `tipSpecOrig` is, that in `tipSpec` the
+ * default values of the tips have been added/modified, if needed and that
+ * `tipSpecOrig` is the original as you have specified it in {@link TipObject}.
+ *
+ * For stylistic reasons, it is recommend to not hardcode the function into the
+ * this file, but use a separate file/module.
+ *
+ * @callback callbackShowTip
+ * @param  {TipObject} tipSpec the TipObject, merged with default values
+ * @param  {module:RandomTips~TipConfigObject} thisTipConfig the settings of the tip
+ * @param  {TipObject} tipSpecOrig the original, unmodified (frozen) TipObject
+ *                                  of the tip
+ * @param  {module:RandomTips~ModuleConfig} moduleConfig the whole config of this module
+ * @return {boolean|null}
  */
 
 /**

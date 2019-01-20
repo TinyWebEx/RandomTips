@@ -775,7 +775,7 @@ describe("RandomTips", function () {
                 await AddonSettingsStub.stubSettings({
                     "randomTips": {
                         tips: {},
-                        triggeredOpen: 9,
+                        triggeredOpen: 8, // +1 by init later
                     }
                 });
 
@@ -783,7 +783,7 @@ describe("RandomTips", function () {
                 const tip = Object.assign({}, alwaysShowsTip);
                 delete tip.requiredTriggers;
 
-                await RandomTips.init([prepareTip(tip)]);
+                await RandomTips.init([prepareTip(tip)]); // counts triggeredOpen+1
 
                 RandomTips.showRandomTip();
                 assertNoRandomTipShown();
@@ -793,7 +793,7 @@ describe("RandomTips", function () {
                 await AddonSettingsStub.stubSettings({
                     "randomTips": {
                         tips: {},
-                        triggeredOpen: 2,
+                        triggeredOpen: 1, // +1 by init later
                     }
                 });
 
@@ -801,7 +801,7 @@ describe("RandomTips", function () {
                 const tip = Object.assign({}, alwaysShowsTip);
                 tip.requiredTriggers = 3;
 
-                await RandomTips.init([prepareTip(tip)]);
+                await RandomTips.init([prepareTip(tip)]); // counts triggeredOpen+1
 
                 RandomTips.showRandomTip();
                 assertNoRandomTipShown();
@@ -1166,6 +1166,245 @@ describe("RandomTips", function () {
 
                 // assert callback has been called
                 sinon.assert.calledOnce(tip.actionButton.action);
+            });
+        });
+
+        describe("showTip function", function () {
+            let clock;
+
+            afterEach(function () {
+                if (clock) {
+                    clock.restore();
+                }
+            });
+
+            it("throws, if invalid value is returned", async function () {
+                stubEmptySettings();
+
+                const testWithValue = async (value, messageMatch, userDescr = messageMatch) => {
+                    // get tip
+                    const tip = Object.assign({}, neverShowsTip);
+                    tip.showTip = sinon.stub().returns(value);
+
+                    await RandomTips.init([prepareTip(tip)]);
+
+                    chai.assert.throws(RandomTips.showRandomTip, Error, messageMatch, `Did not throw (correctly) when function returned "${userDescr}".`);
+
+                    // cleanup for next test
+                    CustomMessages.reset();
+                };
+
+                // check that throwed message also includes the type that was actually returned
+                const symbol = Symbol("testSymbol");
+                await testWithValue("TestString1", "TestString1");
+                await testWithValue(123, "123");
+                await testWithValue(symbol, "symbol", symbol.toString()); // error here is "can't convert symbol to string" though
+                await testWithValue(undefined, "undefined");
+            });
+
+            it("if it returns true, tip is shown", async function () {
+                stubEmptySettings();
+
+                // get tip
+                const tip = Object.assign({}, neverShowsTip);
+                tip.showTip = sinon.stub().returns(true);
+
+                await RandomTips.init([prepareTip(tip)]);
+
+                RandomTips.showRandomTip();
+                assertRandomTipShown();
+
+                // assert callback has been called
+                sinon.assert.calledOnce(tip.showTip);
+            });
+
+            it("if it returns false, tip is never shown", async function () {
+                stubEmptySettings();
+
+                // get tip
+                const tip = Object.assign({}, alwaysShowsTip);
+                tip.showTip = sinon.stub().returns(false);
+
+                await RandomTips.init([prepareTip(tip)]);
+
+                RandomTips.showRandomTip();
+                assertNoRandomTipShown();
+
+                // assert callback has been called
+                sinon.assert.calledOnce(tip.showTip);
+            });
+
+            it("if it returns null, other requirements are evaluated", async function () {
+                stubEmptySettings();
+
+                // get tips
+                const tipShow = Object.assign({}, alwaysShowsTip);
+                tipShow.showTip = sinon.stub().returns(null);
+
+                const tipHide = Object.assign({}, neverShowsTip);
+                tipHide.showTip = sinon.stub().returns(null);
+
+                // positive test (shows tip)
+                saveHtmlTestCode();
+
+                await RandomTips.init([prepareTip(tipShow)]);
+
+                RandomTips.showRandomTip();
+                assertRandomTipShown();
+
+                // cleanup for next test
+                CustomMessages.reset();
+                resetHtmlTestCode();
+
+                // negative test (does not show tip)
+                await RandomTips.init([prepareTip(tipHide)]);
+
+                RandomTips.showRandomTip();
+                assertNoRandomTipShown();
+
+                // assert callbacks have been called once
+                sinon.assert.calledOnce(tipShow.showTip);
+                sinon.assert.calledOnce(tipHide.showTip);
+            });
+
+            it("function get's correct arguments passed", async function () {
+                stubEmptySettings();
+
+                const expectedTipConfig = {
+                    shownCount: 0,
+                    dismissedCount: 0,
+                    shownContext: {}
+                };
+
+                // get tip
+                const tip = Object.assign({}, neverShowsTip);
+                tip.showTip = () => {};
+                const mock = sinon.mock(tip);
+                mock.expects("showTip").once()
+                    .withArgs(sinon.match(tip), // has at least same properties
+                        expectedTipConfig,
+                        sinon.match.same(tip), // is exactly the same reference/object
+                        sinon.match.object
+                            .and(sinon.match.has("triggeredOpen", sinon.match.number)))
+                    .returns(null);
+
+                // cannot freeze tip here, as the mock verification of sinon
+                // would then fail
+                await RandomTips.init([tip]);
+
+                RandomTips.showRandomTip();
+
+                // assert callback has been called
+                mock.verify();
+            });
+
+            it("function can modify thisTipConfig", async function () {
+                clock = sinon.useFakeTimers();
+                stubEmptySettings();
+
+                const newFakeData = Symbol("new data here :)");
+
+                // get tip
+                const tip = Object.assign({}, neverShowsTip);
+                tip.showTip = sinon.stub().callsFake((tipSpec, thisTipConfig) => {
+                    thisTipConfig.additionalProperty = newFakeData; // new data
+                    thisTipConfig.shownCount = -100; // fake/modify data
+
+                    return false;
+                });
+
+                await RandomTips.init([prepareTip(tip)]);
+
+                RandomTips.showRandomTip();
+
+                // need to wait as saving is debounced
+                RandomTips.showRandomTipIfWanted();
+                clock.next();
+
+                // verify the setting has been saved
+                sinon.assert.callCount(AddonSettingsStub.stubs.sync.set, 1);
+
+                // verify the saved settings are expected
+                const data = AddonSettingsStub.syncStorage.internalStorage;
+
+                // verify it saved some settings
+                chai.assert.deepNestedPropertyVal(
+                    data,
+                    "randomTips.tips.neverShowsTip.additionalProperty",
+                    newFakeData,
+                    "did not save newly added data"
+                );
+
+                chai.assert.deepNestedPropertyVal(
+                    data,
+                    "randomTips.tips.neverShowsTip.shownCount",
+                    -100,
+                    "did not save modified data"
+                );
+            });
+
+            it("function can modify tipConfig", async function () {
+                clock = sinon.useFakeTimers();
+                stubEmptySettings();
+
+                const newFakeData = Symbol("new data here :)");
+
+                // get tip
+                const tip = Object.assign({}, neverShowsTip);
+                tip.showTip = sinon.stub().callsFake((tipSpec, thisTipConfig, tipSpecOrig, moduleConfig) => {
+                    moduleConfig.additionalProperty = newFakeData; // new data
+                    moduleConfig.triggeredOpen = -100; // fake/modify data
+
+                    return false;
+                });
+
+                await RandomTips.init([prepareTip(tip)]);
+
+                RandomTips.showRandomTip();
+
+                // need to wait as saving is debounced
+                RandomTips.showRandomTipIfWanted();
+                clock.next();
+
+                // verify the setting has been saved
+                sinon.assert.callCount(AddonSettingsStub.stubs.sync.set, 1);
+
+                // verify the saved settings are expected
+                const data = AddonSettingsStub.syncStorage.internalStorage;
+
+                // verify it saved some settings
+                chai.assert.deepNestedPropertyVal(
+                    data,
+                    "randomTips.additionalProperty",
+                    newFakeData,
+                    "did not save newly added data"
+                );
+
+                chai.assert.deepNestedPropertyVal(
+                    data,
+                    "randomTips.triggeredOpen",
+                    -100,
+                    "did not save modified data"
+                );
+            });
+
+            it("function can modify settings to influence tip showing", async function () {
+                stubEmptySettings();
+
+                // get tip
+                const tip = Object.assign({}, neverShowsTip);
+                tip.requiredShowCount = 10;
+                tip.showTip = sinon.stub().callsFake((tipSpec, thisTipConfig) => {
+                    thisTipConfig.shownCount = 10; // fake, to claim it is already shown 10 times
+
+                    return null; // IMPORTANT!
+                });
+
+                await RandomTips.init([prepareTip(tip)]);
+
+                RandomTips.showRandomTip();
+
+                assertNoRandomTipShown();
             });
         });
     });
