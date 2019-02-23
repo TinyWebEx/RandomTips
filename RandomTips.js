@@ -200,11 +200,11 @@ function applyTipSpecAndConfigDefaults(tipSpecOrig) {
  * @param  {TipObject} tipSpec
  * @param  {TipConfigObject} thisTipConfig
  * @param  {Object} tipSpecOrig
- * @returns {bool}
+ * @returns {Promise} bool
  */
-function shouldBeShown(tipSpec, thisTipConfig, tipSpecOrig) {
+async function shouldBeShown(tipSpec, thisTipConfig, tipSpecOrig) {
     if (tipSpec.showTip) {
-        const returnValue = tipSpec.showTip(tipSpec, thisTipConfig, tipSpecOrig, moduleConfig);
+        const returnValue = await tipSpec.showTip(tipSpec, thisTipConfig, tipSpecOrig, moduleConfig);
         saveConfig();
         switch (returnValue) {
         // pass-through booleans
@@ -289,13 +289,13 @@ export function setContext(newContext) {
  * Selects and shows a random tip.
  *
  * @public
- * @returns {void}
+ * @returns {Promise}
  */
-export function showRandomTip() {
+export async function showRandomTip() {
     // only try to select tip, if one is even available
     if (tips.length === 0) {
         console.info("no tips to show available anymore");
-        return;
+        return Promise.reject(new Error("all tips were already shown"));
     }
 
     // randomly select element
@@ -305,25 +305,24 @@ export function showRandomTip() {
     // prepare tip spec
     const [tipSpec, thisTipConfig] = applyTipSpecAndConfigDefaults(tipSpecOrig);
 
-    if (!shouldBeShown(tipSpec, thisTipConfig, tipSpecOrig)) {
+    if (!(await shouldBeShown(tipSpec, thisTipConfig, tipSpecOrig))) {
         // remove tip
         tips.splice(randomNumber, 1);
 
         // retry random selection
-        showRandomTip();
-        return;
+        return showRandomTip();
     }
 
     console.info("selected tip to be shown:", randomNumber, tipSpec);
 
-    showTip(tipSpec, thisTipConfig);
+    return showTip(tipSpec, thisTipConfig);
 }
 
 /**
  * Shows the random tip only randomly so the user is not annoyed.
  *
  * @public
- * @returns {void}
+ * @returns {Promise}
  */
 export function showRandomTipIfWanted() {
     saveConfig();
@@ -331,10 +330,10 @@ export function showRandomTipIfWanted() {
     // randomize tip showing in general
     if (!randomizePassed(GLOBAL_RANDOMIZE)) {
         console.info("show no random tip, because randomize did not pass");
-        return;
+        return Promise.reject(new Error("show no random tip, because randomize did not pass"));
     }
 
-    showRandomTip();
+    return showRandomTip();
 }
 
 /**
