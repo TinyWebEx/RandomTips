@@ -128,15 +128,15 @@ function messageDismissed(param) {
 }
 
 /**
- * Returns true or false at random. The passed procentage indicates how
+ * Returns true or false at random. The passed propability indicates how
  * much of the calls should return "true" on average.
  *
  * @private
- * @param  {number} percentage
+ * @param  {number} propability
  * @returns {bool}
  */
-function randomizePassed(percentage) {
-    return (Math.random() < percentage);
+function randomizePassed(propability) {
+    return (Math.random() < propability);
 }
 
 /**
