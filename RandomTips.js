@@ -295,7 +295,7 @@ export async function showRandomTip() {
     // only try to select tip, if one is even available
     if (tips.length === 0) {
         console.info("no tips to show available anymore");
-        return Promise.reject(new Error("all tips were already shown"));
+        return Promise.reject(new Error("no tips to show available anymore"));
     }
 
     // randomly select element
