@@ -224,7 +224,7 @@ async function shouldBeShown(tipSpec, thisTipConfig, tipSpecOrig) {
     if (moduleConfig.triggeredOpen < tipSpec.requiredTriggers) {
         return false;
     }
-    // 1 : x -> if one number is not selected, do not display result
+    // only show result in x% of cases (uses float points < 1 for percentage)
     if (tipSpec.randomizeDisplay && !randomizePassed(tipSpec.randomizeDisplay)) {
         return false;
     }
