@@ -351,7 +351,7 @@ export function showRandomTipIfWanted() {
  * @public
  * @returns {Promise.<void>}
  */
-export function init(tipsToShow) {
+export function init() {
     // load function
     // We need to assign it here to make it testable.
     saveConfig = debounce(() => {
