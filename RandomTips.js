@@ -11,6 +11,8 @@
 // lodash
 import debounce from "../lodash/debounce.js";
 
+import { tips as tipsToShow } from "/common/modules/data/Tips.js";
+
 import * as AddonSettings from "../AddonSettings/AddonSettings.js";
 import * as CustomMessages from "../MessageHandler/CustomMessages.js";
 
@@ -292,6 +294,13 @@ export function setContext(newContext) {
  * @returns {Promise}
  */
 export async function showRandomTip() {
+    // load tips if not already loaded
+    if (!tips) {
+        // use local shallow copy, so we can modify it
+        // inner objects won't be modified, so we do not need to deep-clone it.
+        tips = tipsToShow.slice();
+    }
+
     // only try to select tip, if one is even available
     if (tips.length === 0) {
         console.info("no tips to show available anymore");
@@ -340,14 +349,9 @@ export function showRandomTipIfWanted() {
  * Initialises the module.
  *
  * @public
- * @param {TipObject[]} tipsToShow the tips object to init
  * @returns {Promise.<void>}
  */
 export function init(tipsToShow) {
-    // use local shallow copy, so we can modify it
-    // inner objects won't be modified, so we do not need to deep-clone it.
-    tips = tipsToShow.slice();
-
     // load function
     // We need to assign it here to make it testable.
     saveConfig = debounce(() => {
