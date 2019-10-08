@@ -31,10 +31,9 @@ It's just the default message markup, it uses the "info" style here and an ID `m
 A full example of how to use it, is the following:
 
 ```js
-// fetch tips from somewhere..
 
 // init RandomTips
-RandomTips.init(tips).then(() => {
+RandomTips.init().then(() => {
     RandomTips.setContext("options");
     RandomTips.showRandomTipIfWanted();
 });
