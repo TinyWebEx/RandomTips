@@ -40,9 +40,9 @@ RandomTips.init().then(() => {
 ```
 
 This does the following steps:
-1. Initializes the module with the list of all tips (the [tip data](#specifying-tips)).
+1. Initializes the module 
 2. When they are loaded, sets a specific [context](#context), which allows you to show some tips only in some "contexts".
-3. Shows a tip with a chance of 20%, so on average only in 1 of 5 triggers of this function, a tip is shown.
+3. Shows a tip with a chance of 20%, so on average only in 1 of 5 triggers of this function, a tip is shown (if tip is going to be shown and no tips are yet loaded, loads list of all tips (the [tip data](#specifying-tips))).
 
 Instead of the last step, you can also use `showRandomTip` to force it to evaluate showing a tip. Note it still depends on your [tip spec](#specifying-tips) whether any (and if so which) tip is actually shown. 
 
