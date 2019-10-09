@@ -11,8 +11,6 @@
 // lodash
 import debounce from "../lodash/debounce.js";
 
-import { tips as tipsToShow } from "/common/modules/data/Tips.js";
-
 import * as AddonSettings from "../AddonSettings/AddonSettings.js";
 import * as CustomMessages from "../MessageHandler/CustomMessages.js";
 
@@ -291,9 +289,10 @@ export function setContext(newContext) {
  * Selects and shows a random tip.
  *
  * @public
+ * @param {TipObject[]} tipsToShow
  * @returns {Promise}
  */
-export async function showRandomTip() {
+export async function showRandomTip(tipsToShow) {
     // load tips if not already loaded
     if (!tips) {
         // use local shallow copy, so we can modify it
@@ -331,9 +330,10 @@ export async function showRandomTip() {
  * Shows the random tip only randomly so the user is not annoyed.
  *
  * @public
+ * @param {TipObject[]} tips
  * @returns {Promise}
  */
-export function showRandomTipIfWanted() {
+export function showRandomTipIfWanted(tips) {
     saveConfig();
 
     // randomize tip showing in general
@@ -342,7 +342,7 @@ export function showRandomTipIfWanted() {
         return Promise.reject(new Error("show no random tip, because randomize did not pass"));
     }
 
-    return showRandomTip();
+    return showRandomTip(tips);
 }
 
 /**
