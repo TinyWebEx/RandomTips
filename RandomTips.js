@@ -66,8 +66,10 @@ const DEFAULT_TIP_CONFIG = Object.freeze({
 });
 
 /**
+ * is a string if not initialized/loaded yet
+ *
  * @private
- * @type {TipObject[]}
+ * @type {TipObject[]|string}
  * @see {@link tips}
  */
 let tips;
@@ -292,6 +294,15 @@ export function setContext(newContext) {
  * @returns {Promise}
  */
 export async function showRandomTip() {
+    // load tips if not already loaded
+    if (!tips || !Array.isArray(tips)) {
+        const tipsToShow = import(tips); // ES6 dynamic modules, requires Firefoy >= 67
+
+        // use local shallow copy, so we can modify it
+        // inner objects won't be modified, so we do not need to deep-clone it.
+        tips = tipsToShow.slice();
+    }
+
     // only try to select tip, if one is even available
     if (tips.length === 0) {
         console.info("no tips to show available anymore");
@@ -340,13 +351,16 @@ export function showRandomTipIfWanted() {
  * Initialises the module.
  *
  * @public
- * @param {TipObject[]} tipsToShow the tips object to init
+ * @param {TipObject[]|string} [tipsToShow="/common/modules/data/Tips.js"]
+ *                              optionally, the tips object to init
+ *                              or the path to lazy-load the data from
  * @returns {Promise.<void>}
  */
-export function init(tipsToShow) {
-    // use local shallow copy, so we can modify it
-    // inner objects won't be modified, so we do not need to deep-clone it.
-    tips = tipsToShow.slice();
+export function init(tipsToShow = "/common/modules/data/Tips.js") {
+    if (tipsToShow) {
+        // use local shallow copy, if it si an array or save path
+        tips = Array.isArray(tipsToShow) ? tipsToShow.slice() : tipsToShow;
+    }
 
     // load function
     // We need to assign it here to make it testable.
