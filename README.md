@@ -34,14 +34,14 @@ A full example of how to use it, is the following:
 // fetch tips from somewhere..
 
 // init RandomTips
-RandomTips.init(tips).then(() => {
+RandomTips.init("/common/modules/data/Tips.js").then(() => {
     RandomTips.setContext("options");
     RandomTips.showRandomTipIfWanted();
 });
 ```
 
 This does the following steps:
-1. Initializes the module with the list of all tips (the [tip data](#specifying-tips)).
+1. Initializes the module with the path to list of all tips (the [tip data](#specifying-tips)). They are loaded automatically.
 2. When they are loaded, sets a specific [context](#context), which allows you to show some tips only in some "contexts".
 3. Shows a tip with a chance of 20%, so on average only in 1 of 5 triggers of this function, a tip is shown.
 
