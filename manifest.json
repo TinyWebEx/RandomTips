@@ -20,7 +20,7 @@
       //ID required, because of storage permission
       "id": "exampleId@rugk.github.io",
       // minimum version, because of module system
-      "strict_min_version": "60.0a1"
+      "strict_min_version": "67.0a1"
     }
   }
 }
