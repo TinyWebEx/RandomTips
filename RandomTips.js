@@ -294,8 +294,8 @@ export function setContext(newContext) {
 export async function showRandomTip() {
     // only try to select tip, if one is even available
     if (tips.length === 0) {
-        console.info("no tips to show available anymore");
-        return Promise.reject(new Error("no tips to show available anymore"));
+        console.trace("no tips to show available anymore");
+        return;
     }
 
     // randomly select element
@@ -322,15 +322,15 @@ export async function showRandomTip() {
  * Shows the random tip only randomly so the user is not annoyed.
  *
  * @public
- * @returns {Promise}
+ * @returns {Promise | undefined}
  */
 export function showRandomTipIfWanted() {
     saveConfig();
 
     // randomize tip showing in general
     if (!randomizePassed(GLOBAL_RANDOMIZE)) {
-        console.info("show no random tip, because randomize did not pass");
-        return Promise.reject(new Error("show no random tip, because randomize did not pass"));
+        console.trace("show no random tip, because randomize did not pass");
+        return;
     }
 
     return showRandomTip();
