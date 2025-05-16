@@ -340,7 +340,7 @@ export function showRandomTipIfWanted() {
  * Initialises the module.
  *
  * @public
- * @param {TipObject[]} tipsToShow the tips object to init
+ * @param {readonly TipObject[]} tipsToShow the tips object to init
  * @returns {Promise.<void>}
  */
 export function init(tipsToShow) {
